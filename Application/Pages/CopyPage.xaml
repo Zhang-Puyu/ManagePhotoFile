@@ -1,0 +1,109 @@
+﻿<Page x:Class="PhotoTools.Application.Pages.CopyPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:PhotoTools.Application.Pages"
+      xmlns:viewmodel="clr-namespace:PhotoTools.Application.ViewModels"
+      d:DataContext="{d:DesignInstance viewmodel:CopyViewModel}"
+      mc:Ignorable="d" 
+      d:DesignHeight="600" d:DesignWidth="800"
+      FontFamily="Microsoft YaHei UI Light"
+      FontSize="16"
+      Title="CopyCutPage">
+    <Page.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </Page.Resources>
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Row="0" Grid.ColumnSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="jpg 路径：" Grid.Row="0" Grid.Column="0" Margin="5,3"/>
+            <TextBlock Text="raw 路径：" Grid.Row="1" Grid.Column="0" Margin="5,3"/>
+            <TextBlock Text="目标路径：" Grid.Row="2" Grid.Column="0" Margin="5,3"/>
+
+            <TextBox IsReadOnly="true" Grid.Row="0" Grid.Column="2" Margin="5,3,40,3" Text="{Binding JpgPath}" IsEnabled="{Binding IsIdel}"/>
+            <TextBox IsReadOnly="true" Grid.Row="1" Grid.Column="2" Margin="5,3,40,3" Text="{Binding RawPath}" IsEnabled="{Binding IsIdel}"/>
+            <TextBox IsReadOnly="true" Grid.Row="2" Grid.Column="2" Margin="5,3,40,3" Text="{Binding TargetPath}" IsEnabled="{Binding IsIdel}"/>
+
+            <Button Content="选择" Grid.Row="0" Grid.Column="1" Width="80" Margin="5,3" Command="{Binding ChooseJpgPathCommand}"/>
+            <Button Content="选择" Grid.Row="1" Grid.Column="1" Width="80" Margin="5,3" Command="{Binding ChooseRawPathCommand}"/>
+            <Button Content="选择" Grid.Row="2" Grid.Column="1" Width="80" Margin="5,3" Command="{Binding ChooseTargetPathCommand}"/>
+
+            <TextBlock Text="jpg 文件前缀：" Grid.Row="0" Grid.Column="3" Margin="5,3"/>
+            <TextBlock Text="raw 文件后缀：" Grid.Row="1" Grid.Column="3" Margin="5,3"/>
+
+            <TextBox Text="{Binding JpgSuffix}" Width="80" Grid.Row="0" Grid.Column="4" Margin="5, 3"/>
+            <TextBox Text="{Binding RawSuffix}" Width="80" Grid.Row="1" Grid.Column="4" Margin="5, 3"/>
+        </Grid>
+        <GroupBox Header="jpg 文件列表" Grid.Row="1" Grid.Column="0" Margin="5">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <ListBox Margin="5" ItemsSource="{Binding JpgList}"/>
+                <DockPanel Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left">
+                    <TextBlock Text="jpg 文件总数: " Margin="5, 2"/>
+                    <TextBlock Text="{Binding JpgTotalCount}"/>
+                </DockPanel>
+                <DockPanel Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left">
+                    <TextBlock Text="未找到对应 raw 文件数量: " Margin="5, 2"/>
+                    <TextBlock Text="{Binding JpgResidueCount}"/>
+                </DockPanel>
+            </Grid>
+        </GroupBox>
+        <GroupBox Header="raw 文件列表" Grid.Row="1" Grid.Column="1" Margin="5" >
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <ListBox Margin="5" ItemsSource="{Binding RawList}"/>
+                <DockPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left">
+                    <TextBlock Text="raw 文件总数: " Margin="5, 2"/>
+                    <TextBlock Text="{Binding RawTotalCount}"/>
+                </DockPanel>
+                <DockPanel Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left">
+                    <TextBlock Text="未找到对应 jpg 文件数: " Margin="5, 2"/>
+                    <TextBlock Text="{Binding RawResidueCount}"/>
+                </DockPanel>
+            </Grid>
+        </GroupBox>
+        <ProgressBar Grid.Row="2" Grid.ColumnSpan="2" Height="20" Margin="5, 5" Maximum="{Binding MaxProgress}" Value="{Binding Progress}"/>
+        <Button Content="刷新" Width="100" Height="30" Margin="5" FontFamily="Microsoft YaHei UI"
+            Command="{Binding RefreshCommand}"  IsEnabled="{Binding IsIdel}"
+            HorizontalAlignment="Left" Grid.Row="5" Grid.Column="0"/>
+        <DockPanel FlowDirection="RightToLeft" HorizontalAlignment="Right" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
+            <Button Content="剪切对应 raw 到目标路径" Width="220" Height="30" Margin="5" FontFamily="Microsoft YaHei UI"
+                Command="{Binding AsyncMoveCommand}" IsEnabled="{Binding IsIdel}"/>
+            <Button Content="复制对应 raw 到目标路径" Width="220" Height="30" Margin="10" FontFamily="Microsoft YaHei UI"
+                Command="{Binding AsyncCopyCommand}" IsEnabled="{Binding IsIdel}"/>
+        </DockPanel>
+    </Grid>
+</Page>
