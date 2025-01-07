@@ -3,7 +3,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System.IO;
-using System.Windows;
+using PhotoTools.Models;
+using PhotoTools.Application.Dialog;
 
 namespace PhotoTools.Application.ViewModels
 {
@@ -71,9 +72,9 @@ namespace PhotoTools.Application.ViewModels
 
         #region 剪切和复制命令
         private bool CanWork() => JpgList.Count > 0 && 
-            !string.IsNullOrWhiteSpace(JpgPath) && !string.IsNullOrWhiteSpace(JpgSuffix) &&
-            !string.IsNullOrWhiteSpace(RawPath) && !string.IsNullOrWhiteSpace(RawSuffix) &&
-            !string.IsNullOrWhiteSpace(TargetPath);
+            JpgPath.IsInvalidPath() && !string.IsNullOrWhiteSpace(JpgSuffix) &&
+            RawPath.IsInvalidPath() && !string.IsNullOrWhiteSpace(RawSuffix) &&
+            TargetPath.IsInvalidPath();
 
         public IAsyncRelayCommand AsyncCopyCommand { get; }
         private Task CopyWork()
@@ -132,8 +133,8 @@ namespace PhotoTools.Application.ViewModels
 
             if (ExistedRawList.Count > 0)
             {
-                string msg = $"以下文件已存在，是否覆盖？\n{string.Join("\n", ExistedRawList)}";
-                if (MessageBox.Show(msg, "提示", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                var dialog = new ConverExistedFileDialog(ExistedRawList.Values);
+                if (dialog.ShowDialog() == true)
                 {
                     Parallel.ForEach(ExistedRawList, pair => 
                     { 
@@ -147,17 +148,39 @@ namespace PhotoTools.Application.ViewModels
         }
 
         [RelayCommand]
+        private void StopWork()
+        {
+            ContinueFlag = false;
+        }
+
+        #endregion
+
+        #region 刷新文件信息
+        [RelayCommand]
         private void Refresh()
         {
-            JpgList = new ObservableCollection<string>(
-                Directory.GetFiles(JpgPath, $"*.{JpgSuffix}"));
-            JpgTotalCount   = JpgList.Count;
-            JpgResidueCount = JpgList.Count;
+            JpgList = new ObservableCollection<string>(Directory.GetFiles(JpgPath, $"*.{JpgSuffix}"));
+            JpgTotalCount = JpgList.Count;
+            // 计算在jpg中找不到对应的raw文件
+            JpgResidueCount = 0;
+            foreach (var jpg in JpgList)
+            {
+                string raw = Path.ChangeExtension(jpg, RawSuffix);
+                if (!RawList.Contains(Path.Combine(RawPath, Path.GetFileName(raw))))
+                    ++JpgResidueCount;
+            }
 
-            RawList = new ObservableCollection<string>(
-                Directory.GetFiles(RawPath, $"*.{RawSuffix}"));
-            RawTotalCount   = RawList.Count;
-            RawResidueCount = RawList.Count;
+
+            RawList = new ObservableCollection<string>(Directory.GetFiles(RawPath, $"*.{RawSuffix}"));
+            RawTotalCount = RawList.Count;
+            // 计算在raw中找不到对应的jpg文件
+            RawResidueCount = 0;
+            foreach (var raw in RawList)
+            {
+                string jpg = Path.ChangeExtension(raw, JpgSuffix);
+                if (!JpgList.Contains(Path.Combine(JpgPath, Path.GetFileName(jpg))))
+                    ++RawResidueCount;
+            }
         }
         #endregion
 
@@ -174,10 +197,15 @@ namespace PhotoTools.Application.ViewModels
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok && dialog.FileName != null)
             {
                 JpgPath = dialog.FileName;
-                JpgList = new ObservableCollection<string>(
-                    Directory.GetFiles(JpgPath, $"*.{JpgSuffix}"));
-                JpgTotalCount   = JpgList.Count;
-                JpgResidueCount = JpgList.Count;
+
+                if (RawPath.IsInvalidPath() && !string.IsNullOrWhiteSpace(RawSuffix))
+                    Refresh();
+                else
+                {
+                    JpgList = new ObservableCollection<string>(Directory.GetFiles(JpgPath, $"*.{JpgSuffix}"));
+                    JpgTotalCount = JpgList.Count;
+                    JpgResidueCount = 0;
+                }
             }
         }
 
@@ -192,10 +220,14 @@ namespace PhotoTools.Application.ViewModels
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok && dialog.FileName != null)
             {
                 RawPath = dialog.FileName;
-                RawList = new ObservableCollection<string>(
-                    Directory.GetFiles(RawPath, $"*.{RawSuffix}"));
-                RawTotalCount   = RawList.Count;
-                RawResidueCount = RawList.Count;
+                if (JpgPath.IsInvalidPath() && !string.IsNullOrWhiteSpace(JpgSuffix))
+                    Refresh();
+                else
+                {
+                    RawList = new ObservableCollection<string>(Directory.GetFiles(RawPath, $"*.{RawSuffix}"));
+                    RawTotalCount = RawList.Count;
+                    RawResidueCount = 0;
+                }
             }
         }
 

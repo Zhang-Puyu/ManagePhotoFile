@@ -45,9 +45,9 @@
             <TextBlock Text="raw 路径：" Grid.Row="1" Grid.Column="0" Margin="5,3"/>
             <TextBlock Text="目标路径：" Grid.Row="2" Grid.Column="0" Margin="5,3"/>
 
-            <TextBox IsReadOnly="true" Grid.Row="0" Grid.Column="2" Margin="5,3,40,3" Text="{Binding JpgPath}" IsEnabled="{Binding IsIdel}"/>
-            <TextBox IsReadOnly="true" Grid.Row="1" Grid.Column="2" Margin="5,3,40,3" Text="{Binding RawPath}" IsEnabled="{Binding IsIdel}"/>
-            <TextBox IsReadOnly="true" Grid.Row="2" Grid.Column="2" Margin="5,3,40,3" Text="{Binding TargetPath}" IsEnabled="{Binding IsIdel}"/>
+            <TextBox Grid.Row="0" Grid.Column="2" Margin="5,3,40,3" Text="{Binding JpgPath}"/>
+            <TextBox Grid.Row="1" Grid.Column="2" Margin="5,3,40,3" Text="{Binding RawPath}"/>
+            <TextBox Grid.Row="2" Grid.Column="2" Margin="5,3,40,3" Text="{Binding TargetPath}"/>
 
             <Button Content="选择" Grid.Row="0" Grid.Column="1" Width="80" Margin="5,3" Command="{Binding ChooseJpgPathCommand}"/>
             <Button Content="选择" Grid.Row="1" Grid.Column="1" Width="80" Margin="5,3" Command="{Binding ChooseRawPathCommand}"/>
