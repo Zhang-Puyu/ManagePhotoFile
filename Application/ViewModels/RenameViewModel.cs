@@ -8,12 +8,6 @@ namespace PhotoTools.Application.ViewModels
 {
     public partial class RenameViewModel : ObservableObject
     {
-        public RenameViewModel()
-        {
-            OrignalFileList = new ObservableCollection<string>();
-            RenamedFileList = new ObservableCollection<string>();
-        }
-
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(RenameCommand))]
         private string _workPath = string.Empty;
@@ -37,15 +31,15 @@ namespace PhotoTools.Application.ViewModels
                     OrignalFileList = new ObservableCollection<string>
                         (Directory.GetFiles(WorkPath).Select(Path.GetFileName));
 
-                FileCount = OrignalFileList.Count;
+                OrignalFileCount = OrignalFileList.Count;
             }
         }
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(RenameCommand))]
-        private ObservableCollection<string> _orignalFileList;
+        private ObservableCollection<string> _orignalFileList = new();
         [ObservableProperty]
-        private ObservableCollection<string> _renamedFileList;
+        private ObservableCollection<string> _renamedFileList = new();
 
         [ObservableProperty]
         private string _addedSuffix = string.Empty;
@@ -60,7 +54,7 @@ namespace PhotoTools.Application.ViewModels
         private string _pattern = "*.*";
 
         [ObservableProperty]
-        private int _fileCount = 0;
+        private int _orignalFileCount = 0;
         [ObservableProperty]
         private int _reanamedFileCount = 0;
 

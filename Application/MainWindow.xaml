@@ -4,30 +4,20 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PhotoTools.Application"
+        xmlns:pages="clr-namespace:PhotoTools.Application.Pages"
         mc:Ignorable="d"
-        Title="照片工具箱" Height="700" Width="800">
+        Title="照片工具箱" Height="500" Width="600">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <Frame Grid.Row="0" Grid.ColumnSpan="2" Margin="5" x:Name="frame" NavigationUIVisibility="Hidden"/>
-        <Separator Margin="5,0,5,5" Grid.Row="1" Grid.ColumnSpan="2"/>
-        <Menu Grid.Row="2" Margin="0" Foreground="Black" FontFamily="Microsoft YaHei UI">
-            <MenuItem Header="功能切换" Margin="3" FontSize="18" >
-                <MenuItem Header="对应照片抓取" Margin="3" Tag="CopyPage" Click="MenuItem_Click"/>
-                <MenuItem Header="批量重命名" Margin="3" Tag="RenamePage" Click="MenuItem_Click"/>
-            </MenuItem>
-        </Menu>
-        <TextBlock Grid.Row="2" Grid.Column="2" Foreground="Black"
-                   Text="Copyright @2024 张璞玉 all rights reserved."
-                   FontFamily="Microsoft YaHei UI Light"
+        <TabControl TabStripPlacement="Bottom">
+            <TabItem Header="RAW抓取" >
+                <Frame Source="Pages/CopyPage.xaml" NavigationUIVisibility="Hidden"/>
+            </TabItem>
+            <TabItem Header="批量重命名">
+                <Frame Source="Pages/RenamePage.xaml" NavigationUIVisibility="Hidden"/>
+            </TabItem>
+        </TabControl>
+        <TextBlock VerticalAlignment="Bottom" Text="Copyright @2024 张璞玉 all rights reserved."
                    HorizontalAlignment="Right"
-                   Margin="5,5,12,5" Opacity="0.8" FontSize="18"/>
+                   Margin="5,2,12,3" Opacity="0.6"/>
     </Grid>
 </Window>

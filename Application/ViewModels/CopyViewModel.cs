@@ -3,8 +3,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System.IO;
-using PhotoTools.Models;
 using PhotoTools.Application.Dialog;
+using PhotoTools.Application.Models;
 
 namespace PhotoTools.Application.ViewModels
 {
@@ -72,9 +72,9 @@ namespace PhotoTools.Application.ViewModels
 
         #region 剪切和复制命令
         private bool CanWork() => JpgList.Count > 0 && 
-            JpgPath.IsInvalidPath() && !string.IsNullOrWhiteSpace(JpgSuffix) &&
-            RawPath.IsInvalidPath() && !string.IsNullOrWhiteSpace(RawSuffix) &&
-            TargetPath.IsInvalidPath();
+            JpgPath.IsValidPath() && !string.IsNullOrWhiteSpace(JpgSuffix) &&
+            RawPath.IsValidPath() && !string.IsNullOrWhiteSpace(RawSuffix) &&
+            TargetPath.IsValidPath();
 
         public IAsyncRelayCommand AsyncCopyCommand { get; }
         private Task CopyWork()
@@ -118,7 +118,7 @@ namespace PhotoTools.Application.ViewModels
                         JpgList.RemoveAt(i);
                         RawList.RemoveAt(rawIndex);
                     }
-                    Progress++;
+                    ++Progress;
                 }
                 else
                 {
@@ -159,27 +159,33 @@ namespace PhotoTools.Application.ViewModels
         [RelayCommand]
         private void Refresh()
         {
-            JpgList = new ObservableCollection<string>(Directory.GetFiles(JpgPath, $"*.{JpgSuffix}"));
-            JpgTotalCount = JpgList.Count;
-            // 计算在jpg中找不到对应的raw文件
-            JpgResidueCount = 0;
-            foreach (var jpg in JpgList)
+            if (JpgPath.IsValidPath())
             {
-                string raw = Path.ChangeExtension(jpg, RawSuffix);
-                if (!RawList.Contains(Path.Combine(RawPath, Path.GetFileName(raw))))
-                    ++JpgResidueCount;
+                JpgList = new ObservableCollection<string>(Directory.GetFiles(JpgPath, $"*.{JpgSuffix}"));
+                JpgTotalCount = JpgList.Count;
+                // 计算在jpg中找不到对应的raw文件
+                JpgResidueCount = 0;
+                foreach (var jpg in JpgList)
+                {
+                    string raw = Path.ChangeExtension(jpg, RawSuffix);
+                    if (!RawList.Contains(Path.Combine(RawPath, Path.GetFileName(raw))))
+                        ++JpgResidueCount;
+                }
+
             }
 
-
-            RawList = new ObservableCollection<string>(Directory.GetFiles(RawPath, $"*.{RawSuffix}"));
-            RawTotalCount = RawList.Count;
-            // 计算在raw中找不到对应的jpg文件
-            RawResidueCount = 0;
-            foreach (var raw in RawList)
+            if (RawPath.IsValidPath())
             {
-                string jpg = Path.ChangeExtension(raw, JpgSuffix);
-                if (!JpgList.Contains(Path.Combine(JpgPath, Path.GetFileName(jpg))))
-                    ++RawResidueCount;
+                RawList = new ObservableCollection<string>(Directory.GetFiles(RawPath, $"*.{RawSuffix}"));
+                RawTotalCount = RawList.Count;
+                // 计算在raw中找不到对应的jpg文件
+                RawResidueCount = 0;
+                foreach (var raw in RawList)
+                {
+                    string jpg = Path.ChangeExtension(raw, JpgSuffix);
+                    if (!JpgList.Contains(Path.Combine(JpgPath, Path.GetFileName(jpg))))
+                        ++RawResidueCount;
+                }
             }
         }
         #endregion
@@ -198,7 +204,7 @@ namespace PhotoTools.Application.ViewModels
             {
                 JpgPath = dialog.FileName;
 
-                if (RawPath.IsInvalidPath() && !string.IsNullOrWhiteSpace(RawSuffix))
+                if (RawPath.IsValidPath() && !string.IsNullOrWhiteSpace(RawSuffix))
                     Refresh();
                 else
                 {
@@ -220,7 +226,7 @@ namespace PhotoTools.Application.ViewModels
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok && dialog.FileName != null)
             {
                 RawPath = dialog.FileName;
-                if (JpgPath.IsInvalidPath() && !string.IsNullOrWhiteSpace(JpgSuffix))
+                if (JpgPath.IsValidPath() && !string.IsNullOrWhiteSpace(JpgSuffix))
                     Refresh();
                 else
                 {

@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace PhotoTools.Models
+namespace PhotoTools.Application.Models
 {
     public class DiskSpace
     {
