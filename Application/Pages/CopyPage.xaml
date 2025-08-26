@@ -103,13 +103,13 @@
             </Grid>
         </GroupBox>
         <ProgressBar Grid.Row="2" Grid.ColumnSpan="2" Height="15" Margin="2,3" Maximum="{Binding MaxProgress}" Value="{Binding Progress}"/>
-        <Button Content="刷新" Width="80" Margin="2"
+        <Button Content="刷新" Width="80" Margin="2" Height="22"
             Command="{Binding RefreshCommand}"  IsEnabled="{Binding IsIdel}"
             HorizontalAlignment="Left" Grid.Row="5" Grid.Column="0"/>
         <DockPanel FlowDirection="RightToLeft" HorizontalAlignment="Right" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
-            <Button Content="剪切对应 raw 到目标路径" Width="200" Margin="2"
+            <Button Content="剪切对应 raw 到目标路径" Width="200" Margin="2" Height="22"
                 Command="{Binding AsyncMoveCommand}" IsEnabled="{Binding IsIdel}"/>
-            <Button Content="复制对应 raw 到目标路径" Width="200" Margin="2"
+            <Button Content="复制对应 raw 到目标路径" Width="200" Margin="2" Height="22"
                 Command="{Binding AsyncCopyCommand}" IsEnabled="{Binding IsIdel}"/>
         </DockPanel>
     </Grid>

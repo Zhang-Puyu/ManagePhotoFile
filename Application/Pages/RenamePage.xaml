@@ -90,7 +90,7 @@
                 </DockPanel>
             </Grid>
         </GroupBox>
-        <Button Grid.Row="4" Grid.Column="1" Margin="2" Content="执行重命名"
+        <Button Grid.Row="4" Grid.Column="1" Margin="2" Content="执行重命名" Height="22"
                 Width="140" Command="{Binding RenameCommand}" 
                 HorizontalAlignment="Right" VerticalContentAlignment="Center"/>
     </Grid>
